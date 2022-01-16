@@ -14,26 +14,26 @@ class SupportTicket():
         self.customer = customer
         self.issue = issue
 
-class ProcessStrategy(ABC):
+class OrderingStrategy(ABC):
     
     @abstractmethod
-    def process_ticket(self, tickets: 'list[SupportTicket]') -> 'list[SupportTicket]':
+    def order_tickets(self, tickets: 'list[SupportTicket]') -> 'list[SupportTicket]':
         pass
 
 
-class Fifo(ProcessStrategy):
+class Fifo(OrderingStrategy):
 
-    def process_ticket(self, tickets: 'list[SupportTicket]'):
+    def order_tickets(self, tickets: 'list[SupportTicket]'):
         return tickets
         
-class Lifo(ProcessStrategy):
+class Lifo(OrderingStrategy):
 
-    def process_ticket(self, tickets: 'list[SupportTicket]'):
+    def order_tickets(self, tickets: 'list[SupportTicket]'):
         return reversed(tickets)
 
-class Random(ProcessStrategy):
+class Random(OrderingStrategy):
 
-    def process_ticket(self, tickets: 'list[SupportTicket]'):
+    def order_tickets(self, tickets: 'list[SupportTicket]'):
         list_copy = tickets.copy()
         random.seed()
         random.shuffle(list_copy)
@@ -42,9 +42,9 @@ class Random(ProcessStrategy):
 
 class CustomerSupport():
     
-    def __init__(self, processing_strategy: ProcessStrategy = Fifo()):
+    def __init__(self, ordering_strategy: OrderingStrategy = Fifo()):
          self.tickets = []
-         self.processing_strategy = processing_strategy
+         self.ordering_strategy = ordering_strategy
 
     def create_ticket(self, customer, issue):
         self.tickets.append(SupportTicket(customer, issue))
@@ -55,7 +55,7 @@ class CustomerSupport():
             print("There are no tickets to process. Well done!")
             return
 
-        tickets_to_process = self.processing_strategy.process_ticket(self.tickets)
+        tickets_to_process = self.ordering_strategy.order_tickets(self.tickets)
         for ticket in tickets_to_process:
             self.process_ticket(ticket)
 
